@@ -128,9 +128,105 @@ function App (): React.ReactNode {
     activeMidiInput.onmidimessage = (event: WebMidi.MIDIMessageEvent) => { // FIXME: Consider using addEventListener
       const data = event.data
 
+      const gmSystemOn = [0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7]
+      if (compareArray(gmSystemOn, data)) {
+        initTracks()
+      }
+
+      const gsReset = [0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7]
+      if (compareArray(gsReset, data)) {
+        initTracks()
+      }
+
+      const systemModeSet1 = [0xF0, 0x41, 0x10, 0x42, 0x12, 0x00, 0x00, 0x7F, 0x00, 0x01, 0xF7]
+      if (compareArray(systemModeSet1, data)) {
+        initTracks()
+      }
+
+      const systemModeSet2 = [0xF0, 0x41, 0x10, 0x42, 0x12, 0x00, 0x00, 0x7F, 0x01, 0x00, 0xF7]
+      if (compareArray(systemModeSet2, data)) {
+        initTracks()
+      }
+
+      const xgSystemOn = [0xF0, 0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00, 0xF7]
+      if (compareArray(xgSystemOn, data)) {
+        initTracks()
+      }
+
+      if (data.length === 2) {
+        if (data[0] >= 0xC0 && data[0] <= 0xCF) {
+          const channel = data[0] - 0xC0
+          const number = data[1]
+          // TODO: (commit('setProgramChange', { channel, number }))
+          // TODO: dispatch('sendEmulatedData', channel)
+          return
+        }
+      } else if (data.length === 3) {
+        if (data[0] >= 0xB0 && data[0] <= 0xBF) {
+          const channel = data[0] - 0xB0
+          const parameter = data[2]
+          if (data[1] === 0x00) {
+            // TODO: commit('setBankSelectMSB', { channel, parameter })
+          } else if (data[1] === 0x20) {
+            // TODO: commit('setBankSelectLSB', { channel, parameter })
+          }
+        }
+      } else if (data.length === 11) {
+        if (data[0] === 0xF0 && data[10] === 0xf7) {
+          const hasChecksumError = !checkSysExChecksum(data)
+          const isRolandGS = data[1] === 0x41 && data[2] === 0x10 && data[3] === 0x42 && data[4] === 0x12
+          if (isRolandGS) {
+            if (!hasChecksumError) {
+              const a = data[5]
+              const b = data[6]
+              const c = data[7]
+              const d = data[8]
+              if (a === 0x40 && c === 0x15) {
+                let partNum
+                if (b >= 0x11 && b <= 0x19) {
+                  partNum = b - 0x10
+                } else if (b >= 0x1A && b <= 0x1F) {
+                  partNum = b - 0x10 + 1
+                } else {
+                  partNum = 10
+                }
+                const channel = partNum - 1
+                const isDrum = d > 0
+                // TODO: commit('setIsDrum', { channel, isDrum })
+              }
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+              console.log(`SysEx: ${data}`)
+            } else {
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+              console.log(`%c[CHECKSUM ERROR] SysEx: ${data} 'color:red;`)
+            }
+          }
+        }
+      }
+
       activeMidiOutput.send(data)
     }
   }
+
+  // commitやdispatchにあったものはいったんここへ
+  function initTracks (): void {
+    console.log('initTracks')
+  }
+
+  // function sendEmulatedData ({ getters }, channel) {
+  //   const midiOutput = getters['getCurrentOutputDevice']
+  //   const tracks = getters['getTracks']
+  //   const track = tracks[channel]
+  //   const { programChangeNumber } = track
+  //   const PCCh = 0xC0 + channel
+  //   const BSCh = 0xB0 + channel
+  //   const BSLParam = getters['getForce55MAP'] ? 1 : 0
+  //   const BSMParam = track.emulateBankSelectMSB
+  //   midiOutput.send([BSCh, 0x20, BSLParam])
+  //   midiOutput.send([BSCh, 0x00, BSMParam])
+  //   midiOutput.send([PCCh, programChangeNumber])
+  //   console.log(`%cEmulate: Channel: ${channel + 1}, Bank Select LSB: ${BSLParam}, Bank Select MSB: ${BSMParam}, Program Change: ${programChangeNumber}`, 'color: blue;')
+  // }
 
   return (
     <>
@@ -147,6 +243,33 @@ function App (): React.ReactNode {
                                 }}/>
     </>
   )
+}
+
+function compareArray (arrA: Uint8Array | number[], arrB: Uint8Array | number[]): boolean {
+  if (arrA.length !== arrB.length) {
+    return false
+  }
+  let result = true
+  for (let i = 0; i < arrA.length; i++) {
+    if (arrA[i] !== arrB[i]) {
+      result = false
+      break
+    }
+  }
+  return result
+}
+
+function calcChecksum (d: Uint8Array | number[]): number {
+  const a = d[5]
+  const b = d[6]
+  const c = d[7]
+  const data = d[8]
+  return 0x80 - (a + b + c + data) % 0x80
+}
+
+function checkSysExChecksum (d: Uint8Array | number[]): boolean {
+  const checksum = d[9]
+  return checksum === calcChecksum(d)
 }
 
 interface MidiInputDevicesSelectorProps {
