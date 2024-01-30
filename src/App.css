@@ -1,0 +1,20 @@
+html,body,select {
+    color: #333333;
+    font-size: 12px;
+    user-select: none;
+}
+
+.settings {
+    display: flex;
+    flex-wrap: wrap;
+}
+.label {
+    width: 50px;
+}
+.item {
+    display: flex;
+    margin: 4px;
+}
+.tracks {
+    width: 360px;
+}

@@ -1,0 +1,21 @@
+.track {
+    display: flex;
+}
+.number {
+    width: 30px;
+}
+
+.bmsb {
+    width: 50px;
+}
+.instrument {
+    width: calc(100% - 90px - 4px);
+}
+.emulate {
+    display: inline-block;
+    margin-right: 4px;
+}
+.emulating {
+    color: red;
+    font-weight: bolder;
+}
