@@ -252,9 +252,9 @@ function App (): React.ReactNode {
         }
       } else if (data.length === 11) {
         if (data[0] === 0xf0 && data[10] === 0xf7) {
-          const hasChecksumError = !checkSysExChecksum(data)
-          const isRolandGS = data[1] === 0x41 && data[2] === 0x10 && data[3] === 0x42 && data[4] === 0x12
-          if (isRolandGS) {
+          const isGsFormat = data[1] === 0x41 && data[2] === 0x10 && data[3] === 0x42 && data[4] === 0x12
+          if (isGsFormat) {
+            const hasChecksumError = !checkSysExChecksum(data)
             if (!hasChecksumError) {
               const a = data[5]
               const b = data[6]
