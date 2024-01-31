@@ -28,8 +28,6 @@ type Action = | {
   type: 'toggleForce55Map'
   payload: boolean
 } | {
-  type: 'initTracks'
-} | {
   type: 'setTrack'
   payload: { channel: number
     track: Track }
@@ -78,11 +76,6 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         force55Map: action.payload
-      }
-    case 'initTracks':
-      return {
-        ...state,
-        tracks: createInitialTracks()
       }
     case 'setTrack':
       // eslint-disable-next-line no-case-declarations
@@ -306,8 +299,8 @@ function App (): React.ReactNode {
   // commitやdispatchにあったものはいったんここへ
   function initTracks (): void {
     console.log('initTracks')
-    dispatch({
-      type: 'initTracks'
+    state.tracks.forEach((track, _i) => {
+      track.reset()
     })
   }
 
