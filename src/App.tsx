@@ -2,6 +2,8 @@ import React, { useEffect, useReducer } from 'react'
 import './App.css'
 import Track from './Track.ts'
 import Monitor from './components/monitor/Monitor.tsx'
+import MidiInputDevicesSelector from './components/deviceselector/MidiInputDevicesSelector.tsx'
+import MidiOutputDevicesSelector from './components/deviceselector/MidiOutputDevicesSelector.tsx'
 
 interface State {
   midiInputs: Array<[string, WebMidi.MIDIInput]> | null
@@ -356,50 +358,6 @@ function calcChecksum (d: Uint8Array | number[]): number {
 function checkSysExChecksum (d: Uint8Array | number[]): boolean {
   const checksum = d[9]
   return checksum === calcChecksum(d)
-}
-
-interface MidiInputDevicesSelectorProps {
-  devices: Array<[string, WebMidi.MIDIInput]> | null
-  activeDevice: WebMidi.MIDIInput | null
-  onChangeActiveDevice: (device: WebMidi.MIDIInput) => void
-}
-
-function MidiInputDevicesSelector ({ devices, activeDevice, onChangeActiveDevice }: MidiInputDevicesSelectorProps): React.ReactNode {
-  return MIDIDevicesSelector({ devices, activeDevice, onChangeActiveDevice: (device) => { onChangeActiveDevice(device as WebMidi.MIDIInput) } })
-}
-
-interface MidiOutputDevicesSelectorProps {
-  devices: Array<[string, WebMidi.MIDIOutput]> | null
-  activeDevice: WebMidi.MIDIOutput | null
-  onChangeActiveDevice: (device: WebMidi.MIDIOutput) => void
-}
-
-function MidiOutputDevicesSelector ({ devices, activeDevice, onChangeActiveDevice }: MidiOutputDevicesSelectorProps): React.ReactNode {
-  return MIDIDevicesSelector({ devices, activeDevice, onChangeActiveDevice: (device) => { onChangeActiveDevice(device as WebMidi.MIDIOutput) } })
-}
-
-interface MidiDevicesSelectorProps {
-  devices: Array<[string, WebMidi.MIDIOutput]> | Array<[string, WebMidi.MIDIInput]> | null
-  activeDevice: WebMidi.MIDIOutput | WebMidi.MIDIInput | null
-  onChangeActiveDevice: (device: WebMidi.MIDIOutput | WebMidi.MIDIInput | null) => void
-}
-
-function MIDIDevicesSelector ({ devices, activeDevice, onChangeActiveDevice }: MidiDevicesSelectorProps): React.ReactNode {
-  return (
-    <>
-      <select value={activeDevice?.id ?? ''} onChange={handleChangeSelect}>
-        <option value=''>------</option>
-        {devices?.map(([id, device]) => (
-          <option key={id} value={id}>{device.name}</option>
-        ))}
-      </select>
-    </>
-  )
-  function handleChangeSelect (event: React.ChangeEvent<HTMLSelectElement>): void {
-    const selectedId = event.target.value
-    const device = devices?.find(([id, _device]) => id === selectedId)?.[1]
-    onChangeActiveDevice(device ?? null)
-  }
 }
 
 export default App
