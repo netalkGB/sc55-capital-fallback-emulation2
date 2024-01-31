@@ -4,6 +4,8 @@ import Track from './Track.ts'
 import Monitor from './components/monitor/Monitor.tsx'
 import MidiInputDevicesSelector from './components/deviceselector/MidiInputDevicesSelector.tsx'
 import MidiOutputDevicesSelector from './components/deviceselector/MidiOutputDevicesSelector.tsx'
+import { compareArray } from './utils/ArrayUtils.ts'
+import { checkSysExChecksum } from './utils/GsUtils.ts'
 
 interface State {
   midiInputs: Array<[string, WebMidi.MIDIInput]> | null
@@ -331,33 +333,6 @@ function App (): React.ReactNode {
       </div>
     </>
   )
-}
-
-function compareArray (arrA: Uint8Array | number[], arrB: Uint8Array | number[]): boolean {
-  if (arrA.length !== arrB.length) {
-    return false
-  }
-  let result = true
-  for (let i = 0; i < arrA.length; i++) {
-    if (arrA[i] !== arrB[i]) {
-      result = false
-      break
-    }
-  }
-  return result
-}
-
-function calcChecksum (d: Uint8Array | number[]): number {
-  const a = d[5]
-  const b = d[6]
-  const c = d[7]
-  const data = d[8]
-  return 0x80 - (a + b + c + data) % 0x80
-}
-
-function checkSysExChecksum (d: Uint8Array | number[]): boolean {
-  const checksum = d[9]
-  return checksum === calcChecksum(d)
 }
 
 export default App
