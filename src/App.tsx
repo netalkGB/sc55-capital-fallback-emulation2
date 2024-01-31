@@ -114,7 +114,7 @@ function App (): React.ReactNode {
       const { programChangeNumber } = track
       const bsCh = 0xB0 + i
       const pcCh = 0xC0 + i
-      const bankSelectLSB = state.force55Map ? 1 : 0
+      const bankSelectLSB = state.force55Map ? 1 : state.tracks[i].bankSelectLSB
       state.activeMidiOutput.send([bsCh, 0x20, bankSelectLSB])
       state.activeMidiOutput.send([pcCh, programChangeNumber])
     }
@@ -213,7 +213,7 @@ function App (): React.ReactNode {
           const { programChangeNumber } = track
           const pcCh = 0xC0 + channel
           const bsCh = 0xB0 + channel
-          const bslParam = state.force55Map ? 1 : 0
+          const bslParam = state.force55Map ? 1 : track.bankSelectLSB
           const bsmParam = track.emulateBankSelectMSB
           activeMidiOutput.send([bsCh, 0x20, bslParam])
           activeMidiOutput.send([bsCh, 0x00, bsmParam])
