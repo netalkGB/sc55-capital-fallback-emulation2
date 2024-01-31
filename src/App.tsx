@@ -1,11 +1,13 @@
-import React from 'react'
 import './App.css'
+import Main from './pages/Main.tsx'
+import React from 'react'
+import { StateProvider } from './state/stateContext.tsx'
 
 function App (): React.ReactNode {
   return (
-    <>
-      O
-    </>
+    <StateProvider>
+      <Main />
+    </StateProvider>
   )
 }
 
