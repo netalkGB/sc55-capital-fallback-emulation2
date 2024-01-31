@@ -29,5 +29,10 @@ module.exports = {
         "react"
     ],
     "rules": {
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 }
