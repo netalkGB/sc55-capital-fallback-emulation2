@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
 import Monitor from '../components/monitor/Monitor.tsx'
-import MidiInputDevicesSelector from '../components/deviceselector/MidiInputDevicesSelector.tsx'
-import MidiOutputDevicesSelector from '../components/deviceselector/MidiOutputDevicesSelector.tsx'
 import { compareArray } from '../utils/ArrayUtils.ts'
 import { checkSysExChecksum } from '../utils/GsUtils.ts'
 import { useStateValue } from '../state/stateContext.tsx'
+import { Settings } from '../components/settings/Settings.tsx'
 
 export function Main (): React.ReactNode {
   const [state, dispatch] = useStateValue()
@@ -216,27 +215,7 @@ export function Main (): React.ReactNode {
   return (
     <>
       <div className={'settings'}>
-        <div className={'item'}>
-          <div className={'label'}>Input:</div>
-          <MidiInputDevicesSelector devices={state.midiInputs} activeDevice={state.activeMidiInput}
-                                    onChangeActiveDevice={(device: WebMidi.MIDIInput) => {
-                                      dispatch({ type: 'setActiveMidiInput', payload: device })
-                                    }}/>
-        </div>
-        <div className={'item'}>
-          <div className={'label'}>Output:</div>
-          <MidiOutputDevicesSelector devices={state.midiOutputs} activeDevice={state.activeMidiOutput}
-                                     onChangeActiveDevice={(device: WebMidi.MIDIOutput) => {
-                                       dispatch({ type: 'setActiveMidiOutput', payload: device })
-                                     }}/>
-        </div>
-        <div className={'item'}>
-          <label htmlFor={'f55m'}>FORCE 55MAP:</label>
-          <input type={'checkbox'} id={'f55m'} checked={state.force55Map}
-                 onChange={(event) => {
-                   dispatch({ type: 'toggleForce55Map', payload: event.target.checked })
-                 }}/>
-        </div>
+        <Settings />
       </div>
       <div className={'tracks'}>
         <Monitor tracks={state.tracks}/>
