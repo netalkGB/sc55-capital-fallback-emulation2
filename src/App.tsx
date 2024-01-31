@@ -112,8 +112,8 @@ function App (): React.ReactNode {
     for (let i = 0; i < 16; i++) {
       const track = state.tracks[i]
       const { programChangeNumber } = track
-      const bsCh = 0xB0 + i
-      const pcCh = 0xC0 + i
+      const bsCh = 0xb0 + i
+      const pcCh = 0xc0 + i
       const bankSelectLSB = state.force55Map ? 1 : state.tracks[i].bankSelectLSB
       state.activeMidiOutput.send([bsCh, 0x20, bankSelectLSB])
       state.activeMidiOutput.send([pcCh, programChangeNumber])
@@ -164,34 +164,34 @@ function App (): React.ReactNode {
     activeMidiInput.onmidimessage = (event: WebMidi.MIDIMessageEvent) => { // FIXME: Consider using addEventListener
       const data = event.data
 
-      const gmSystemOn = [0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7]
+      const gmSystemOn = [0xf0, 0x7e, 0x7f, 0x09, 0x01, 0xf7]
       if (compareArray(gmSystemOn, data)) {
         initTracks()
       }
 
-      const gsReset = [0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7]
+      const gsReset = [0xf0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7f, 0x00, 0x41, 0xf7]
       if (compareArray(gsReset, data)) {
         initTracks()
       }
 
-      const systemModeSet1 = [0xF0, 0x41, 0x10, 0x42, 0x12, 0x00, 0x00, 0x7F, 0x00, 0x01, 0xF7]
+      const systemModeSet1 = [0xf0, 0x41, 0x10, 0x42, 0x12, 0x00, 0x00, 0x7f, 0x00, 0x01, 0xf7]
       if (compareArray(systemModeSet1, data)) {
         initTracks()
       }
 
-      const systemModeSet2 = [0xF0, 0x41, 0x10, 0x42, 0x12, 0x00, 0x00, 0x7F, 0x01, 0x00, 0xF7]
+      const systemModeSet2 = [0xf0, 0x41, 0x10, 0x42, 0x12, 0x00, 0x00, 0x7f, 0x01, 0x00, 0xf7]
       if (compareArray(systemModeSet2, data)) {
         initTracks()
       }
 
-      const xgSystemOn = [0xF0, 0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00, 0xF7]
+      const xgSystemOn = [0xf0, 0x43, 0x10, 0x4c, 0x00, 0x00, 0x7e, 0x00, 0xf7]
       if (compareArray(xgSystemOn, data)) {
         initTracks()
       }
 
       if (data.length === 2) {
-        if (data[0] >= 0xC0 && data[0] <= 0xCF) {
-          const channel = data[0] - 0xC0
+        if (data[0] >= 0xc0 && data[0] <= 0xcf) {
+          const channel = data[0] - 0xc0
           const number = data[1]
 
           // set program number
@@ -208,8 +208,8 @@ function App (): React.ReactNode {
           // send emulated data
           // const tracks = state.tracks
           const { programChangeNumber } = track
-          const pcCh = 0xC0 + channel
-          const bsCh = 0xB0 + channel
+          const pcCh = 0xc0 + channel
+          const bsCh = 0xb0 + channel
           const bslParam = state.force55Map ? 1 : track.bankSelectLSB
           const bsmParam = track.emulateBankSelectMSB
           activeMidiOutput.send([bsCh, 0x20, bslParam])
@@ -219,8 +219,8 @@ function App (): React.ReactNode {
           return
         }
       } else if (data.length === 3) {
-        if (data[0] >= 0xB0 && data[0] <= 0xBF) {
-          const channel = data[0] - 0xB0
+        if (data[0] >= 0xb0 && data[0] <= 0xbf) {
+          const channel = data[0] - 0xb0
           const parameter = data[2]
 
           const track = state.tracks[channel]
@@ -247,7 +247,7 @@ function App (): React.ReactNode {
           }
         }
       } else if (data.length === 11) {
-        if (data[0] === 0xF0 && data[10] === 0xf7) {
+        if (data[0] === 0xf0 && data[10] === 0xf7) {
           const hasChecksumError = !checkSysExChecksum(data)
           const isRolandGS = data[1] === 0x41 && data[2] === 0x10 && data[3] === 0x42 && data[4] === 0x12
           if (isRolandGS) {
@@ -260,7 +260,7 @@ function App (): React.ReactNode {
                 let dispCh
                 if (b >= 0x11 && b <= 0x19) {
                   dispCh = b - 0x10
-                } else if (b >= 0x1A && b <= 0x1F) {
+                } else if (b >= 0x1a && b <= 0x1f) {
                   dispCh = b - 0x10 + 1
                 } else {
                   dispCh = 10
