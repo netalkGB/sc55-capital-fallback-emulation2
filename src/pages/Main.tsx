@@ -4,6 +4,7 @@ import { compareArray } from '../utils/ArrayUtils.ts'
 import { checkSysExChecksum } from '../utils/GsUtils.ts'
 import { useStateValue } from '../state/stateContext.tsx'
 import { Settings } from '../components/settings/Settings.tsx'
+import { clearConfig, loadConfig } from '../utils/ConfigLoader.ts'
 
 export function Main (): React.ReactNode {
   const [state, dispatch] = useStateValue()
@@ -53,6 +54,21 @@ export function Main (): React.ReactNode {
         outputs.push(entry)
       }
       dispatch({ type: 'setMidiOutputs', payload: outputs })
+
+      const config = loadConfig()
+      if (config.inputDeviceName !== undefined && config.outputDeviceName !== undefined) {
+        const inputDevice = inputs.find((input: [string, WebMidi.MIDIInput]) => input[1].name === config.inputDeviceName)
+        const outputDevice = outputs.find((output: [string, WebMidi.MIDIOutput]) => output[1].name === config.outputDeviceName)
+        if (inputDevice !== undefined && outputDevice !== undefined) {
+          dispatch({ type: 'setActiveMidiInput', payload: inputDevice[1] })
+          dispatch({ type: 'setActiveMidiOutput', payload: outputDevice[1] })
+          dispatch({ type: 'toggleForce55Map', payload: config.force55Map })
+        } else {
+          clearConfig()
+        }
+      } else {
+        clearConfig()
+      }
     }
     const onMIDIFailure = (): void => {
       alert('MIDI Access failure')
