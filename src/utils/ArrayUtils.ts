@@ -2,12 +2,10 @@ export function compareArray (arrA: Uint8Array | number[], arrB: Uint8Array | nu
   if (arrA.length !== arrB.length) {
     return false
   }
-  let result = true
   for (let i = 0; i < arrA.length; i++) {
     if (arrA[i] !== arrB[i]) {
-      result = false
-      break
+      return false
     }
   }
-  return result
+  return true
 }
