@@ -117,7 +117,7 @@ export function Main (): React.ReactNode {
 
           // set program number
           const track = state.tracks[channel]
-          track.setProgramChange(number)
+          track.programChangeNumber = number
           dispatch({
             type: 'setTrack',
             payload: {
@@ -147,7 +147,7 @@ export function Main (): React.ReactNode {
           const track = state.tracks[channel]
           if (data[1] === 0x00) {
             // set bank select msb
-            track.setBankSelectMSB(parameter)
+            track.bankSelectMSB = parameter
             dispatch({
               type: 'setTrack',
               payload: {
@@ -157,7 +157,7 @@ export function Main (): React.ReactNode {
             })
           } else if (data[1] === 0x20) {
             // set bank select lsb
-            track.setBankSelectLSB(parameter)
+            track.bankSelectLSB = parameter
             dispatch({
               type: 'setTrack',
               payload: {
