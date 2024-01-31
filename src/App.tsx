@@ -122,8 +122,6 @@ function App (): React.ReactNode {
   }, [state.force55Map])
 
   function onLoad (): void {
-    console.log('onLoad')
-
     if (navigator.requestMIDIAccess === undefined) {
       alert('Web MIDI API not supported')
       return
@@ -269,7 +267,6 @@ function App (): React.ReactNode {
                 }
                 const channel = dispCh - 1
                 const isDrum = d > 0
-                console.log('set drum', channel, isDrum)
                 // set isDrum
                 const track = state.tracks[channel]
                 track.setIsDrum(isDrum)
@@ -297,7 +294,6 @@ function App (): React.ReactNode {
 
   // commitやdispatchにあったものはいったんここへ
   function initTracks (): void {
-    console.log('initTracks')
     state.tracks.forEach((track, _i) => {
       track.reset()
     })
@@ -324,7 +320,6 @@ function App (): React.ReactNode {
           <label htmlFor={'f55m'}>FORCE 55MAP:</label>
           <input type={'checkbox'} id={'f55m'} checked={state.force55Map}
                  onChange={(event) => {
-                   console.log(event.target.checked)
                    dispatch({ type: 'toggleForce55Map', payload: event.target.checked })
                  }}/>
         </div>
