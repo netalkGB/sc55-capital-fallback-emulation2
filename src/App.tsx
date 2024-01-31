@@ -197,19 +197,18 @@ function App (): React.ReactNode {
           const number = data[1]
 
           // set program number
-          const part = state.tracks[channel]
-          part.setProgramChange(number)
+          const track = state.tracks[channel]
+          track.setProgramChange(number)
           dispatch({
             type: 'setTrack',
             payload: {
               channel,
-              track: part
+              track
             }
           })
 
           // send emulated data
           // const tracks = state.tracks
-          const track = part
           const { programChangeNumber } = track
           const pcCh = 0xC0 + channel
           const bsCh = 0xB0 + channel
@@ -225,26 +224,26 @@ function App (): React.ReactNode {
         if (data[0] >= 0xB0 && data[0] <= 0xBF) {
           const channel = data[0] - 0xB0
           const parameter = data[2]
+
+          const track = state.tracks[channel]
           if (data[1] === 0x00) {
             // set bank select msb
-            const part = state.tracks[channel]
-            part.setBankSelectMSB(parameter)
+            track.setBankSelectMSB(parameter)
             dispatch({
               type: 'setTrack',
               payload: {
                 channel,
-                track: part
+                track
               }
             })
           } else if (data[1] === 0x20) {
             // set bank select lsb
-            const part = state.tracks[channel]
-            part.setBankSelectLSB(parameter)
+            track.setBankSelectLSB(parameter)
             dispatch({
               type: 'setTrack',
               payload: {
                 channel,
-                track: part
+                track
               }
             })
           }
@@ -260,25 +259,25 @@ function App (): React.ReactNode {
               const c = data[7]
               const d = data[8]
               if (a === 0x40 && c === 0x15) {
-                let partNum
+                let dispCh
                 if (b >= 0x11 && b <= 0x19) {
-                  partNum = b - 0x10
+                  dispCh = b - 0x10
                 } else if (b >= 0x1A && b <= 0x1F) {
-                  partNum = b - 0x10 + 1
+                  dispCh = b - 0x10 + 1
                 } else {
-                  partNum = 10
+                  dispCh = 10
                 }
-                const channel = partNum - 1
+                const channel = dispCh - 1
                 const isDrum = d > 0
                 console.log('set drum', channel, isDrum)
                 // set isDrum
-                const part = state.tracks[channel]
-                part.setIsDrum(isDrum)
+                const track = state.tracks[channel]
+                track.setIsDrum(isDrum)
                 dispatch({
                   type: 'setTrack',
                   payload: {
                     channel,
-                    track: part
+                    track
                   }
                 })
               }
