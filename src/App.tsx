@@ -116,7 +116,6 @@ function App (): React.ReactNode {
     if (state.activeMidiInput === null || state.activeMidiOutput === null) {
       return
     }
-    console.log('force55Map', state.force55Map)
     for (let i = 0; i < 16; i++) {
       const track = state.tracks[i]
       const { programChangeNumber } = track
@@ -126,6 +125,7 @@ function App (): React.ReactNode {
       state.activeMidiOutput.send([bsCh, 0x20, bankSelectLSB])
       state.activeMidiOutput.send([pcCh, programChangeNumber])
     }
+    start()
   }, [state.force55Map])
 
   function onLoad (): void {
