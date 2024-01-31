@@ -83,11 +83,11 @@ const reducer = (state: State, action: Action): State => {
       }
     case 'setTrack':
       // eslint-disable-next-line no-case-declarations
-      const tracks2 = [...state.tracks]
-      tracks2[action.payload.channel] = action.payload.track
+      const tracks = state.tracks
+      tracks[action.payload.channel] = action.payload.track
       return {
         ...state,
-        tracks: tracks2
+        tracks
       }
     default:
       return state
